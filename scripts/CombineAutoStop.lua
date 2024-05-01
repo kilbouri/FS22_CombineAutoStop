@@ -52,6 +52,4 @@ function CombineAutoStop:onUpdate(dt)
 end
 
 -- todo:
--- 1. figure out how to make it so that the harvester is only stopped when the harvester is automatically
---    switched off
 -- 2. unregister the event listener when nobody is driving the vehicle.
