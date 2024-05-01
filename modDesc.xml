@@ -8,7 +8,7 @@
         <en>Combine AutoStop</en>
     </title>
 
-    <iconFilename>modIcon.dds</iconFilename>
+    <iconFilename>modIcon.png</iconFilename>
 
     <multiplayer supported="true" />
 
