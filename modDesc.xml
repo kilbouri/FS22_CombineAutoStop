@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<modDesc descVersion="64">
+
+    <author>Isaac Kilbourne</author>
+    <version>1.0.0.0</version>
+
+    <title>
+        <en>Combine AutoStop</en>
+    </title>
+
+    <iconFilename>modIcon.dds</iconFilename>
+
+    <multiplayer supported="true" />
+
+    <description>
+        <en><![CDATA[A simple script mod which automatically stops any combine harvester when the tank is full and cruise control is enabled.
+Please report issues or feature improvements at https://github.com/kilbouri/FS22_Combine_AutoStop
+]]>		</en>
+    </description>
+
+    <extraSourceFiles>
+        <sourceFile filename="scripts/RegisterSpecializations.lua" />
+    </extraSourceFiles>
+</modDesc>
