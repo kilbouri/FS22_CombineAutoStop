@@ -6,9 +6,22 @@ CombineAutoStop.specTableName = "spec_" .. CombineAutoStop.modName .. "." .. Com
 
 CombineAutoStop.debug = true
 
-function CombineAutoStop.debugPrint(msg)
-    if CombineAutoStop.debug then
-        printWarning(msg)
+function CombineAutoStop.debugPrint(val)
+    if not CombineAutoStop.debug then
+        return
+    end
+
+    if type(val) == "table" then
+        local str = ""
+        for key, value in pairs(val) do
+            str = str .. " " .. tostring(key) .. ": " .. tostring(value) .. ";"
+        end
+
+        CombineAutoStop.debugPrint(str)
+    end
+
+    if type(val) == "string" then
+        printWarning("CombineAutoStop[Debug] " .. val)
     end
 end
 
@@ -22,7 +35,14 @@ function CombineAutoStop.registerEventListeners(vehicleType)
 end
 
 function CombineAutoStop:onUpdate(dt)
+    CombineAutoStop.debugPrint("Begin Update")
+    CombineAutoStop.debugPrint({
+        client = self.isClient,
+        server = self.isServer
+    })
+
     if not self.isServer then
+        CombineAutoStop.debugPrint("End Update (not server)")
         return -- server side only please :]
     end
 
@@ -46,9 +66,20 @@ function CombineAutoStop:onUpdate(dt)
 
     local threshingStopped = wasThreshing and not isThreshing
 
+    CombineAutoStop.debugPrint({
+        cruising = isCruising,
+        full = isFull,
+        isThreshing = isThreshing,
+        wasThreshing = wasThreshing,
+        threshingStopped = threshingStopped
+    })
+
     if isCruising and isFull and threshingStopped then
         combine:brakeToStop()
+        CombineAutoStop.debugPrint("Braking")
     end
+
+    CombineAutoStop.debugPrint("End Update (No action required/action taken)")
 end
 
 -- todo:
