@@ -22,7 +22,7 @@ jobs:
           echo "releaseDate=$(date +'v%Y.%m.%d.%H.%M.%S.auto')" >> ${GITHUB_ENV}
 
       - name: Zip repository contents
-        run: zip -r ${{ env.modName }}.zip . -x ".git*/**" -x "*.ps1" -x "*.xcf" -x "*.md"
+        run: zip -r ${{ env.modName }}.zip . -x ".git*" -x "*.ps1" -x "*.xcf" -x "*.md"
 
       - name: Create release
         id: create_release
