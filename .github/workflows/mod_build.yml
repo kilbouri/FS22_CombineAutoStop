@@ -1,0 +1,40 @@
+name: Build Mod
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  create_release:
+    runs-on: ubuntu-latest
+    env:
+      modName: FS22_CombineAutoStop
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install zip
+        run: sudo apt-get install zip
+
+      - name: Zip repository contents
+        run: zip -r ${{ env.modName }}.zip . -x ".github/workflows" -x ".gitignore" -x "*.ps1" -x "*.xcf" -x "*.md"
+
+      - name: Create release
+        id: create_release
+        uses: actions/create-release@v1
+        with:
+          tag_name: ${{ github.run_number }}
+          release_name: ${{ env.modName }} - ${{ github.event.created_at }}
+          body: |
+            This is an auto-generated release. **Note: this is a development version!**
+          draft: false
+          prerelease: true
+
+      - name: Upload release artifact
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./${{ env.modName }}.zip
+          asset_name: ${{ env.modName }}.zip
+          asset_content_type: application/zip
