@@ -19,7 +19,7 @@ jobs:
 
       - name: Set release date
         run: |
-          echo "releaseDate=$(date +'%Y-%m-%d %H-%M-%S')" >> ${GITHUB_ENV}
+          echo "releaseDate=$(date +'v%Y.%m.%d.%H.%M.%S.auto')" >> ${GITHUB_ENV}
 
       - name: Zip repository contents
         run: zip -r ${{ env.modName }}.zip . -x ".git*/**" -x "*.ps1" -x "*.xcf" -x "*.md"
