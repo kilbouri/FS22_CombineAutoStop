@@ -30,8 +30,8 @@ jobs:
             This is an auto-generated release. **Note: this is a development version!**
           draft: false
           prerelease: true
-          env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload release artifact
         uses: actions/upload-release-asset@v1
