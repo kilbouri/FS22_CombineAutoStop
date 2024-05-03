@@ -27,6 +27,10 @@ function CombineAutoStop.registerEventListeners(vehicleType)
     SpecializationUtil.registerEventListener(vehicleType, "onFillUnitFillLevelChanged", CombineAutoStop)
 end
 
+function CombineAutoStop.registerFunctions(vehicleType)
+    SpecializationUtil.registerFunction(vehicleType, "stop", CombineAutoStop.stop)
+end
+
 function CombineAutoStop:onFillUnitFillLevelChanged(fillUnitIndex, fillLevelDelta, fillTypeIndex, toolType,
                                                     fillPositionData, appliedDelta)
     CombineAutoStop.debugPrint("Begin onFillUnitFillLevelChanged")
@@ -41,6 +45,7 @@ function CombineAutoStop:onFillUnitFillLevelChanged(fillUnitIndex, fillLevelDelt
     end
 
     -- Retrieve specializations
+    local autoStop = self[CombineAutoStop.specTableName]
     local drivable = self.spec_drivable
     local combine = self.spec_combine
 
@@ -66,8 +71,32 @@ function CombineAutoStop:onFillUnitFillLevelChanged(fillUnitIndex, fillLevelDelt
         return
     end
 
-    combine:brakeToStop()
+    autoStop:stop()
     CombineAutoStop.debugPrint("End onFillUnitFillLevelChanged (vehicle braking)")
+end
+
+function CombineAutoStop:stop()
+    CombineAutoStop.debugPrint("Stopping vehicle")
+
+    local combine = self.spec_combine
+    local gps = self.spec_globalPositioningSystem
+
+    -- Interop with stijnwop's Guidance Steering Mod
+    if gps ~= nil then
+        CombineAutoStop.debugPrint("Detected Guidance Steering")
+
+        if gps:getHasGuidanceSystem() then
+            CombineAutoStop.debugPrint("Guidance Steering is active, disengaging to stop vehicle")
+
+            -- @stijnwop, if you're reading this, it'd be nice if you could provide a public interface
+            -- to interface with the GPS :) I used your source code to find out this is what I need to do,
+            -- but since its not in a public API you have every right to change how it works and break my mod.
+            gps.lastInputValues.guidanceSteeringIsActive = false
+            gps.guidanceSteeringIsActive = false
+        end
+    end
+
+    combine:brakeToStop()
 end
 
 function CombineAutoStop.debugPrint(val)

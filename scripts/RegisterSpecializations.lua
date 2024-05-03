@@ -15,7 +15,7 @@ end
 -- 1. "scripts/[specName].lua" exists, and
 -- 2. the script contains a class with the same (case sensitive) name as the specialization.
 local function register(specName, requirements)
-    local fileName = Utils.getFilename(specName .. ".lua", g_currentModDirectory .. "scripts/")
+    local fileName = Utils.getFilename("scripts/" .. specName .. ".lua", g_currentModDirectory)
     g_specializationManager:addSpecialization(specName, specName, fileName, '')
 
     for typeName, typeEntry in pairs(g_vehicleTypeManager.types) do
