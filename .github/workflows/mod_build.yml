@@ -17,6 +17,10 @@ jobs:
       - name: Install zip
         run: sudo apt-get install zip
 
+      - name: Set release date
+        run: |
+          echo "RELEASE_DATE=$(date +'%Y-%m-%d %H-%M-%S')" >> ${GITHUB_ENV}
+
       - name: Zip repository contents
         run: zip -r ${{ env.modName }}.zip . -x ".git*/**" -x "*.ps1" -x "*.xcf" -x "*.md"
 
