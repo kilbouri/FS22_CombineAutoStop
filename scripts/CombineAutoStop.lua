@@ -24,55 +24,50 @@ function CombineAutoStop.prerequisitesPresent(specializations)
 end
 
 function CombineAutoStop.registerEventListeners(vehicleType)
-    SpecializationUtil.registerEventListener(vehicleType, "onUpdate", CombineAutoStop)
+    SpecializationUtil.registerEventListener(vehicleType, "onFillUnitFillLevelChanged", CombineAutoStop)
 end
 
-function CombineAutoStop:onUpdate(dt)
-    CombineAutoStop.debugPrint("Begin Update")
+function CombineAutoStop:onFillUnitFillLevelChanged(fillUnitIndex, fillLevelDelta, fillTypeIndex, toolType,
+                                                    fillPositionData, appliedDelta)
+    CombineAutoStop.debugPrint("Begin onFillUnitFillLevelChanged")
     CombineAutoStop.debugPrint({
         client = self.isClient,
         server = self.isServer
     })
 
     if not self.isServer then
-        CombineAutoStop.debugPrint("End Update (not server)")
+        CombineAutoStop.debugPrint("End onFillUnitFillLevelChanged (not server)")
         return -- server side only please :]
     end
 
     -- Retrieve specializations
-    local autoStop = self[CombineAutoStop.specTableName]
     local drivable = self.spec_drivable
     local combine = self.spec_combine
 
-    local fillUnitIndex = combine.fillUnitIndex
-    local fillPercentage = combine:getFillUnitFillLevel(fillUnitIndex) / combine:getFillUnitCapacity(fillUnitIndex)
-
-    local isCruising = drivable:getCruiseControlState() == Drivable.CRUISECONTROL_STATE_ACTIVE
-    local isFull = fillPercentage >= 1
-
-    -- We monitor whether or not the combine was threshing so that cruise may be used
-    -- while full (e.g. to drive to a truck). The only time we want to stop the vehicle
-    -- when it is cruising and full is right after it becomes full while cruising.
-    local wasThreshing = Utils.getNoNil(autoStop.wasThreshing, false)
-    local isThreshing = combine:getIsTurnedOn()
-    autoStop.wasThreshing = isThreshing
-
-    local threshingStopped = wasThreshing and not isThreshing
-
-    CombineAutoStop.debugPrint({
-        cruising = isCruising,
-        full = isFull,
-        isThreshing = isThreshing,
-        wasThreshing = wasThreshing,
-        threshingStopped = threshingStopped
-    })
-
-    if isCruising and isFull and threshingStopped then
-        combine:brakeToStop()
-        CombineAutoStop.debugPrint("Braking")
+    if combine.fillUnitIndex ~= fillUnitIndex then
+        CombineAutoStop.debugPrint("End onFillUnitFillLevelChanged (wrong fill unit changed)")
+        return
     end
 
-    CombineAutoStop.debugPrint("End Update (No action required/action taken)")
+    if fillLevelDelta < 0 then
+        CombineAutoStop.debugPrint("End onFillUnitFillLevelChanged (discharging)")
+        return
+    end
+
+    local isCruising = drivable:getCruiseControlState() == Drivable.CRUISECONTROL_STATE_ACTIVE
+    if not isCruising then
+        CombineAutoStop.debugPrint("End onFillUnitFillLevelChanged (not cruising)")
+        return
+    end
+
+    local fillPercentage = combine:getFillUnitFillLevel(fillUnitIndex) / combine:getFillUnitCapacity(fillUnitIndex)
+    if fillPercentage < 1 then
+        CombineAutoStop.debugPrint("End onFillUnitFillLevelChanged (not full)")
+        return
+    end
+
+    combine:brakeToStop()
+    CombineAutoStop.debugPrint("End onFillUnitFillLevelChanged (vehicle braking)")
 end
 
 function CombineAutoStop.debugPrint(val)
