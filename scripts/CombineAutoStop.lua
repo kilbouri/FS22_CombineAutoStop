@@ -4,25 +4,18 @@ CombineAutoStop.modDir = g_currentModDirectory
 CombineAutoStop.specName = "CombineAutoStop"
 CombineAutoStop.specTableName = "spec_" .. CombineAutoStop.modName .. "." .. CombineAutoStop.specName
 
-CombineAutoStop.debug = true
+CombineAutoStop.debug = false
 
-function CombineAutoStop.debugPrint(val)
-    if not CombineAutoStop.debug then
-        return
-    end
+-- Console commands
+addConsoleCommand(
+    "casToggleDebug",
+    "Toggle debug printing for Combine Auto Stop",
+    "toggleDebug",
+    CombineAutoStop)
 
-    if type(val) == "table" then
-        local str = ""
-        for key, value in pairs(val) do
-            str = str .. " " .. tostring(key) .. ": " .. tostring(value) .. ";"
-        end
-
-        CombineAutoStop.debugPrint(str)
-    end
-
-    if type(val) == "string" then
-        printWarning("CombineAutoStop[Debug] " .. val)
-    end
+function CombineAutoStop.toggleDebug()
+    CombineAutoStop.debug = not CombineAutoStop.debug
+    return "debug = " .. tostring(CombineAutoStop.debug)
 end
 
 function CombineAutoStop.prerequisitesPresent(specializations)
@@ -80,6 +73,25 @@ function CombineAutoStop:onUpdate(dt)
     end
 
     CombineAutoStop.debugPrint("End Update (No action required/action taken)")
+end
+
+function CombineAutoStop.debugPrint(val)
+    if not CombineAutoStop.debug then
+        return
+    end
+
+    if type(val) == "table" then
+        local str = ""
+        for key, value in pairs(val) do
+            str = str .. " " .. tostring(key) .. ": " .. tostring(value) .. ";"
+        end
+
+        CombineAutoStop.debugPrint(str)
+    end
+
+    if type(val) == "string" then
+        printWarning("CombineAutoStop[Debug] " .. val)
+    end
 end
 
 -- todo:
