@@ -19,7 +19,7 @@ jobs:
 
       - name: Set release date
         run: |
-          echo "RELEASE_DATE=$(date +'%Y-%m-%d %H-%M-%S')" >> ${GITHUB_ENV}
+          echo "releaseDate=$(date +'%Y-%m-%d %H-%M-%S')" >> ${GITHUB_ENV}
 
       - name: Zip repository contents
         run: zip -r ${{ env.modName }}.zip . -x ".git*/**" -x "*.ps1" -x "*.xcf" -x "*.md"
@@ -30,8 +30,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.event.created_at }}
-          release_name: ${{ env.modName }} - ${{ github.event.created_at }}
+          tag_name: ${{ env.releaseDate }}
+          release_name: ${{ env.modName }} - ${{ env.releaseDate }}
           body: |
             This is an auto-generated release. **Note: this is a development version!**
           draft: false
