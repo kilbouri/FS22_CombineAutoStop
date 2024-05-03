@@ -90,4 +90,6 @@ function CombineAutoStop.debugPrint(val)
 end
 
 -- todo:
--- 2. unregister the event listener when nobody is driving the vehicle.
+-- 1. interop with GPS to disable GPS before braking.
+--    Required as GPS prevents brakeToStop from taking effect until GPS is disabled.
+--    Helpful ref: https://github.com/stijnwop/guidanceSteering/blob/f82ef662b67cf20c50771f5c6f896cf92f077fc1/src/GuidanceSteering.lua#L412
